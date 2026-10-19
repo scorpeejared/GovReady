@@ -8,11 +8,11 @@ GovReady is an Android app that tells you which documents and requirements you n
 
 ## Team
 
-| Name | Role |
-|------|------|
-| _Jared Mesa_ | _Role_ |
-| _Adrian San Juan_ | _Role_ |
-| _Djanhdevik Paragua_ | _Role_ |
+| Name | Role | Contributions |
+|------|------|---------------|
+| Jared Mesa | Project Lead / UX Designer / QA & Code Reviewer | Designed the Week 4 prototype, wrote the project documentation, tested the app and fixed the code (navigation stability, cleanup, design alignment) |
+| Adrian San Juan | Android Developer (UI) | Built the app's UI in Android Studio (Kotlin and Jetpack Compose), following the approved prototype |
+| Djanhdevik Paragua | Documentation Lead / UX Designer | Wrote most of the project documentation and helped design the prototype |
 
 ## What it does
 
