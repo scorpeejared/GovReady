@@ -41,7 +41,7 @@ fun GovTopBar(title: String, onBack: () -> Unit) {
 }
 
 @Composable
-fun SectionLabel(text: String, fontSize: TextUnit = 12.sp) {
+fun GovSectionLabel(text: String, fontSize: TextUnit = 12.sp) {
     Text(text, color = GovColors.TextMuted, fontSize = fontSize, fontWeight = FontWeight.SemiBold)
 }
 
@@ -64,7 +64,7 @@ fun GovChip(text: String, selected: Boolean = false, onClick: () -> Unit) {
 }
 
 @Composable
-fun PrimaryButton(text: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
+fun GovPrimaryButton(text: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
     Button(
         onClick = onClick,
         modifier = modifier.fillMaxWidth().height(44.dp),
@@ -77,7 +77,7 @@ fun PrimaryButton(text: String, modifier: Modifier = Modifier, onClick: () -> Un
 
 /** Bottom action bar: white surface with a hairline top border, as in the prototype. */
 @Composable
-fun BottomBar(content: @Composable () -> Unit) {
+fun GovBottomBar(content: @Composable () -> Unit) {
     Column(Modifier.fillMaxWidth().background(GovColors.White)) {
         HorizontalDivider(color = GovColors.Border)
         Box(Modifier.navigationBarsPadding().padding(horizontal = 16.dp, vertical = 12.dp)) { content() }
@@ -97,7 +97,7 @@ fun Modifier.dashedBorder(color: Color) =
     }
 
 @Composable
-fun VerifiedChip() {
+fun GovVerifiedChip() {
     Row(
         modifier = Modifier
             .background(GovColors.GreenBg, CircleShape)

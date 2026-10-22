@@ -61,14 +61,14 @@ fun SavedCard(item: SavedChecklist, compact: Boolean = false, onClick: () -> Uni
                     Text(item.details.summary, fontSize = 11.sp, color = GovColors.TextMuted)
                 }
                 Spacer(Modifier.width(8.dp))
-                VerifiedChip()
+                GovVerifiedChip()
             }
         } else {
             Column(Modifier.padding(16.dp)) {
                 Text(item.details.transaction, fontWeight = FontWeight.SemiBold, fontSize = 14.sp, color = GovColors.TextDark)
                 Text(item.details.summary, fontSize = 11.sp, color = GovColors.TextMuted)
                 Spacer(Modifier.height(8.dp))
-                VerifiedChip()
+                GovVerifiedChip()
             }
         }
     }

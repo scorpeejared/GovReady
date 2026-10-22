@@ -79,7 +79,7 @@ fun HomeScreen(
 
             if (inProgress != null) {
                 Spacer(Modifier.height(20.dp))
-                SectionLabel("In progress")
+                GovSectionLabel("In progress")
                 Spacer(Modifier.height(8.dp))
                 Surface(
                     onClick = onInProgressClick,
@@ -114,7 +114,7 @@ fun HomeScreen(
 
             Spacer(Modifier.height(20.dp))
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                Box(Modifier.weight(1f)) { SectionLabel("Saved") }
+                Box(Modifier.weight(1f)) { GovSectionLabel("Saved") }
                 if (saved.isNotEmpty()) {
                     Text(
                         "See all",
@@ -146,7 +146,7 @@ fun HomeScreen(
             }
 
             Spacer(Modifier.height(24.dp))
-            SectionLabel("Popular")
+            GovSectionLabel("Popular")
             Spacer(Modifier.height(8.dp))
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),

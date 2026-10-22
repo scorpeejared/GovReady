@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 
 /** Single source of truth for the transactions offered on Home and Purpose. */
@@ -87,27 +88,41 @@ fun buildChecklist(d: Details): Checklist = when (d.transaction) {
     )
 }
 
-class AppViewModel : ViewModel() {
-    var details by mutableStateOf<Details?>(null)
+/**
+ * Backed by [SavedStateHandle] so the in-progress checklist and the saved list come back
+ * if Android kills the app process while it is in the background.
+ */
+class AppViewModel(private val state: SavedStateHandle) : ViewModel() {
+    var details by mutableStateOf(state.get<String>(KEY_DETAILS)?.toDetails())
         private set
-    val checked = mutableStateListOf<String>()
-    val saved = mutableStateListOf<SavedChecklist>()
+    val checked = mutableStateListOf<String>().apply {
+        addAll(state.get<ArrayList<String>>(KEY_CHECKED).orEmpty())
+    }
+    val saved = mutableStateListOf<SavedChecklist>().apply {
+        addAll(state.get<ArrayList<String>>(KEY_SAVED).orEmpty().mapNotNull { it.toSavedChecklist() })
+    }
 
     fun start(d: Details) {
         details = d
         checked.clear()
+        persist()
     }
 
     fun toggle(id: String) {
         if (id in checked) checked.remove(id) else checked.add(id)
+        persist()
     }
 
-    fun clearChecked() = checked.clear()
+    fun clearChecked() {
+        checked.clear()
+        persist()
+    }
 
     fun openSaved(s: SavedChecklist) {
         details = s.details
         checked.clear()
         checked.addAll(s.checkedIds)
+        persist()
     }
 
     fun isSaved(): Boolean = saved.any { it.details == details }
@@ -116,5 +131,38 @@ class AppViewModel : ViewModel() {
         val d = details ?: return
         saved.removeAll { it.details == d }
         saved.add(0, SavedChecklist(d, checked.toList()))
+        persist()
     }
+
+    private fun persist() {
+        state[KEY_DETAILS] = details?.encode()
+        state[KEY_CHECKED] = ArrayList(checked)
+        state[KEY_SAVED] = ArrayList(saved.map { it.encode() })
+    }
+
+    private companion object {
+        const val KEY_DETAILS = "details"
+        const val KEY_CHECKED = "checked"
+        const val KEY_SAVED = "saved"
+    }
+}
+
+private const val SEP = "\u001F"
+
+private fun Details.encode() = listOf(transaction, age, status, firstTime).joinToString(SEP)
+
+private fun String.toDetails(): Details? {
+    val p = split(SEP)
+    val age = p.getOrNull(1)?.toIntOrNull() ?: return null
+    return if (p.size == 4) Details(p[0], age, p[2], p[3].toBoolean()) else null
+}
+
+private fun SavedChecklist.encode() = details.encode() + SEP + checkedIds.joinToString(",")
+
+private fun String.toSavedChecklist(): SavedChecklist? {
+    val sep = lastIndexOf(SEP)
+    if (sep < 0) return null
+    val details = substring(0, sep).toDetails() ?: return null
+    val ids = substring(sep + 1).split(",").filter { it.isNotEmpty() }
+    return SavedChecklist(details, ids)
 }

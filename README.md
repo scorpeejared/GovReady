@@ -61,9 +61,9 @@ GovReady/
         ├── AndroidManifest.xml
         ├── res/values/         # strings.xml (app name), themes.xml
         └── java/com/example/govready/
-            ├── MainActivity.kt      # Entry point + NavHost wiring all screens together
-            ├── Navigation.kt        # Routes (all route/argument names) + safe navigate/back helpers
-            ├── Model.kt             # Data classes, sample checklist data, AppViewModel
+            ├── MainActivity.kt      # Entry point: sets the theme and shows GovReadyApp
+            ├── Navigation.kt        # Routes, safe navigate/back helpers, and the NavHost graph (all navigation lives here)
+            ├── Model.kt             # Data classes, sample checklist data, AppViewModel (state saved via SavedStateHandle)
             ├── Theme.kt             # GovColors palette + Material theme
             ├── Components.kt        # Shared UI: top bar, chips, buttons, verified badge, bottom bar
             ├── HomeScreen.kt        # Home screen
@@ -75,8 +75,8 @@ GovReady/
 
 ### How the pieces fit
 
-- **`MainActivity.kt`** hosts `GovReadyApp`, which creates the `NavHost` and connects each screen's callbacks to navigation. Screens never navigate on their own; they only call the callbacks they are given.
-- **`Navigation.kt`** is the single place where routes and argument names live. `navigateFrom` / `backFrom` only act when the current screen is fully resumed, which is what prevents duplicate screens.
+- **`MainActivity.kt`** only sets the theme and shows `GovReadyApp`.
+- **`Navigation.kt`** is the single place for navigation: the route and argument names, the `NavHost` graph (`GovReadyApp`) that connects each screen's callbacks to navigation, and the `navigateFrom` / `backFrom` helpers. The helpers only act when the current screen is fully resumed, which is what prevents duplicate screens. Screens never navigate on their own; they only call the callbacks they are given.
 - **`Model.kt`** holds the data. `buildChecklist(details)` turns the user's answers into a `Checklist` (requirements, appointment info, fees, location). `AppViewModel` keeps the current details, checked items and saved checklists.
 - **`Theme.kt` / `Components.kt`** keep the look consistent with the approved Week 4 prototype: colors, spacing, typography and shared widgets are defined once and reused.
 
@@ -103,7 +103,7 @@ GovReady/
 ## Known limitations
 
 - **Sample data only.** Requirements, fees and offices are illustrative, not official.
-- **In-memory storage.** Saved checklists and progress live only while the app process is alive. If Android kills the app in the background, they are lost. Persisting them (for example with DataStore or Room) is a planned improvement.
+- **Not stored on the device yet.** The checklist in progress, checked items and the saved list survive rotation and Android killing the app in the background (they are kept with `SavedStateHandle`), but they are lost when the user closes the app. Persisting them with DataStore or Room is a planned improvement.
 - **No real backend or verification.** The "Last verified Sep 1, 2026" badge is static text in this prototype.
 
 ## Design

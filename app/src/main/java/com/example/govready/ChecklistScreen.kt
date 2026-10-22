@@ -57,7 +57,7 @@ fun ChecklistScreen(
                         fontSize = 12.sp,
                         color = GovColors.TextMuted
                     )
-                    Row(Modifier.fillMaxWidth()) { VerifiedChip() }
+                    Row(Modifier.fillMaxWidth()) { GovVerifiedChip() }
                     Spacer(Modifier.height(16.dp))
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                         Text("Ready to bring", fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = GovColors.TextMuted)
@@ -77,7 +77,7 @@ fun ChecklistScreen(
             }
 
             Column(Modifier.padding(16.dp)) {
-                SectionLabel("Requirements")
+                GovSectionLabel("Requirements")
                 Spacer(Modifier.height(8.dp))
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     checklist.requirements.forEach { r ->
@@ -86,7 +86,7 @@ fun ChecklistScreen(
                 }
 
                 Spacer(Modifier.height(20.dp))
-                SectionLabel("Good to know")
+                GovSectionLabel("Good to know")
                 Spacer(Modifier.height(8.dp))
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     val appt = checklist.appointment
@@ -111,7 +111,7 @@ fun ChecklistScreen(
             }
         }
 
-        BottomBar {
+        GovBottomBar {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Surface(
                     onClick = { if (vm.checked.isEmpty()) onEditDetails() else showConfirm = true },

@@ -43,7 +43,7 @@ fun DetailsScreen(
             Text("A few details so the checklist fits your situation.", color = GovColors.TextMuted, fontSize = 12.sp)
             Spacer(Modifier.height(16.dp))
 
-            SectionLabel("Age", fontSize = 11.sp)
+            GovSectionLabel("Age", fontSize = 11.sp)
             Spacer(Modifier.height(8.dp))
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 StepperButton(Icons.Filled.Remove, "Decrease age") { if (age > MIN_AGE) age-- }
@@ -59,7 +59,7 @@ fun DetailsScreen(
             }
             Spacer(Modifier.height(20.dp))
 
-            SectionLabel("Status", fontSize = 11.sp)
+            GovSectionLabel("Status", fontSize = 11.sp)
             Spacer(Modifier.height(8.dp))
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -71,7 +71,7 @@ fun DetailsScreen(
             }
             Spacer(Modifier.height(20.dp))
 
-            SectionLabel("First-time applicant?", fontSize = 11.sp)
+            GovSectionLabel("First-time applicant?", fontSize = 11.sp)
             Spacer(Modifier.height(8.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 YesNoButton("Yes", firstTime, Modifier.weight(1f)) { firstTime = true }
@@ -79,8 +79,8 @@ fun DetailsScreen(
             }
         }
 
-        BottomBar {
-            PrimaryButton("Generate my checklist") { onGenerate(Details(transaction, age, status, firstTime)) }
+        GovBottomBar {
+            GovPrimaryButton("Generate my checklist") { onGenerate(Details(transaction, age, status, firstTime)) }
         }
     }
 }
