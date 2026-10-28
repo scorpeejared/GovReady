@@ -26,7 +26,7 @@ fun PurposeScreen(onBack: () -> Unit, onSelect: (String) -> Unit) {
             Text(
                 "Choose the transaction you are preparing for.",
                 color = GovColors.TextMuted,
-                fontSize = 12.sp
+                fontSize = 13.sp
             )
             Spacer(Modifier.height(12.dp))
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {

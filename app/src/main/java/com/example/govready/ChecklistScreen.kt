@@ -54,14 +54,14 @@ fun ChecklistScreen(
                     Text(
                         details.summary,
                         modifier = Modifier.padding(top = 2.dp, bottom = 12.dp),
-                        fontSize = 12.sp,
+                        fontSize = 13.sp,
                         color = GovColors.TextMuted
                     )
                     Row(Modifier.fillMaxWidth()) { GovVerifiedChip() }
                     Spacer(Modifier.height(16.dp))
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text("Ready to bring", fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = GovColors.TextMuted)
-                        Text("$done / $total", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = GovColors.Navy)
+                        Text("Ready to bring", fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = GovColors.TextMuted)
+                        Text("$done / $total", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = GovColors.Navy)
                     }
                     Spacer(Modifier.height(4.dp))
                     LinearProgressIndicator(
@@ -105,7 +105,7 @@ fun ChecklistScreen(
                     "Prototype uses sample requirements for demonstration.",
                     modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
                     textAlign = TextAlign.Center,
-                    fontSize = 10.sp,
+                    fontSize = 12.sp,
                     color = GovColors.TextMuted
                 )
             }
@@ -117,7 +117,7 @@ fun ChecklistScreen(
                     onClick = { if (vm.checked.isEmpty()) onEditDetails() else showConfirm = true },
                     shape = RoundedCornerShape(12.dp),
                     color = GovColors.Background,
-                    modifier = Modifier.height(44.dp)
+                    modifier = Modifier.height(48.dp)
                 ) {
                     Row(
                         Modifier.padding(horizontal = 12.dp),
@@ -130,7 +130,7 @@ fun ChecklistScreen(
                 }
                 Button(
                     onClick = vm::save,
-                    modifier = Modifier.weight(1f).height(44.dp),
+                    modifier = Modifier.weight(1f).height(48.dp),
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = if (saved) GovColors.GreenBg else GovColors.Navy,
@@ -193,7 +193,7 @@ private fun RequirementCard(r: Requirement, checked: Boolean, onClick: () -> Uni
                 }
                 Text(
                     r.note,
-                    fontSize = 11.sp,
+                    fontSize = 13.sp,
                     color = GovColors.TextMuted,
                     modifier = Modifier.padding(start = 14.dp, top = 2.dp)
                 )
@@ -219,8 +219,8 @@ private fun MetaRow(icon: ImageVector, fg: Color, bg: Color, label: String, valu
             }
             Spacer(Modifier.width(12.dp))
             Column {
-                Text(label, fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = GovColors.TextDark)
-                Text(value, fontSize = 11.sp, color = GovColors.TextMuted)
+                Text(label, fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = GovColors.TextDark)
+                Text(value, fontSize = 13.sp, color = GovColors.TextMuted)
             }
         }
     }
@@ -239,7 +239,7 @@ private fun ConfirmEditDialog(checkedCount: Int, onKeep: () -> Unit, onChange: (
                 Text(
                     "Editing rebuilds the checklist and clears the $checkedCount item${if (checkedCount == 1) "" else "s"} you already checked off.",
                     modifier = Modifier.padding(top = 4.dp),
-                    fontSize = 12.sp,
+                    fontSize = 13.sp,
                     color = GovColors.TextMuted
                 )
                 Row(Modifier.fillMaxWidth().padding(top = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -254,7 +254,7 @@ private fun ConfirmEditDialog(checkedCount: Int, onKeep: () -> Unit, onChange: (
 @Composable
 private fun DialogButton(text: String, bg: Color, fg: Color, modifier: Modifier, onClick: () -> Unit) {
     Surface(onClick = onClick, shape = RoundedCornerShape(8.dp), color = bg, modifier = modifier) {
-        Box(Modifier.padding(vertical = 8.dp), contentAlignment = Alignment.Center) {
+        Box(Modifier.padding(vertical = 13.dp), contentAlignment = Alignment.Center) {
             Text(text, fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = fg)
         }
     }

@@ -18,7 +18,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -41,8 +40,8 @@ fun GovTopBar(title: String, onBack: () -> Unit) {
 }
 
 @Composable
-fun GovSectionLabel(text: String, fontSize: TextUnit = 12.sp) {
-    Text(text, color = GovColors.TextMuted, fontSize = fontSize, fontWeight = FontWeight.SemiBold)
+fun GovSectionLabel(text: String) {
+    Text(text, color = GovColors.TextMuted, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
 }
 
 @Composable
@@ -55,9 +54,9 @@ fun GovChip(text: String, selected: Boolean = false, onClick: () -> Unit) {
     ) {
         Text(
             text,
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
             color = if (selected) Color.White else GovColors.TextDark,
-            fontSize = 12.sp,
+            fontSize = 13.sp,
             fontWeight = FontWeight.Medium
         )
     }
@@ -67,7 +66,7 @@ fun GovChip(text: String, selected: Boolean = false, onClick: () -> Unit) {
 fun GovPrimaryButton(text: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
     Button(
         onClick = onClick,
-        modifier = modifier.fillMaxWidth().height(44.dp),
+        modifier = modifier.fillMaxWidth().height(48.dp),
         shape = RoundedCornerShape(12.dp),
         colors = ButtonDefaults.buttonColors(containerColor = GovColors.Navy)
     ) {
@@ -104,8 +103,8 @@ fun GovVerifiedChip() {
             .padding(horizontal = 8.dp, vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(Icons.Filled.VerifiedUser, null, tint = GovColors.Green, modifier = Modifier.size(13.dp))
+        Icon(Icons.Filled.VerifiedUser, null, tint = GovColors.Green, modifier = Modifier.size(15.dp))
         Spacer(Modifier.width(4.dp))
-        Text("Last verified Sep 1, 2026", color = GovColors.Green, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+        Text("Last verified Sep 1, 2026", color = GovColors.Green, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
     }
 }

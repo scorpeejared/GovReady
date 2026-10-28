@@ -29,7 +29,7 @@ fun SavedScreen(
             Text(
                 "Nothing saved yet.",
                 color = GovColors.TextMuted,
-                fontSize = 12.sp,
+                fontSize = 13.sp,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth().padding(top = 40.dp)
             )
@@ -58,7 +58,7 @@ fun SavedCard(item: SavedChecklist, compact: Boolean = false, onClick: () -> Uni
             Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
                     Text(item.details.transaction, fontWeight = FontWeight.SemiBold, fontSize = 14.sp, color = GovColors.TextDark)
-                    Text(item.details.summary, fontSize = 11.sp, color = GovColors.TextMuted)
+                    Text(item.details.summary, fontSize = 13.sp, color = GovColors.TextMuted)
                 }
                 Spacer(Modifier.width(8.dp))
                 GovVerifiedChip()
@@ -66,7 +66,7 @@ fun SavedCard(item: SavedChecklist, compact: Boolean = false, onClick: () -> Uni
         } else {
             Column(Modifier.padding(16.dp)) {
                 Text(item.details.transaction, fontWeight = FontWeight.SemiBold, fontSize = 14.sp, color = GovColors.TextDark)
-                Text(item.details.summary, fontSize = 11.sp, color = GovColors.TextMuted)
+                Text(item.details.summary, fontSize = 13.sp, color = GovColors.TextMuted)
                 Spacer(Modifier.height(8.dp))
                 GovVerifiedChip()
             }

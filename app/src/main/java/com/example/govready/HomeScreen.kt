@@ -105,7 +105,7 @@ fun HomeScreen(
                         Text(
                             "$checkedCount of ${buildChecklist(inProgress).requirements.size} ready",
                             modifier = Modifier.padding(top = 2.dp),
-                            fontSize = 12.sp,
+                            fontSize = 13.sp,
                             color = GovColors.TextMuted
                         )
                     }
@@ -118,8 +118,8 @@ fun HomeScreen(
                 if (saved.isNotEmpty()) {
                     Text(
                         "See all",
-                        modifier = Modifier.clickable(onClick = onSeeAll),
-                        fontSize = 12.sp,
+                        modifier = Modifier.clickable(onClick = onSeeAll).padding(vertical = 12.dp),
+                        fontSize = 13.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = GovColors.Navy
                     )
@@ -137,7 +137,7 @@ fun HomeScreen(
                 ) {
                     Icon(Icons.Filled.BookmarkBorder, null, tint = GovColors.TextMuted, modifier = Modifier.size(20.dp))
                     Spacer(Modifier.height(8.dp))
-                    Text("Save a checklist to keep it for later.", color = GovColors.TextMuted, fontSize = 12.sp)
+                    Text("Save a checklist to keep it for later.", color = GovColors.TextMuted, fontSize = 13.sp)
                 }
             } else {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {

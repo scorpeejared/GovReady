@@ -11,6 +11,12 @@ import androidx.lifecycle.ViewModel
 /** Single source of truth for the transactions offered on Home and Purpose. */
 val Transactions = listOf("Driver's License", "Passport", "NBI Clearance", "Postal ID")
 
+/** The answers offered for the status question on Details. */
+val Statuses = listOf("Student", "Employed", "Self-employed", "Unemployed")
+
+/** Applicants younger than this need a parent or guardian's consent (sample rule). */
+const val ADULT_AGE = 18
+
 data class Details(
     val transaction: String,
     val age: Int,
@@ -44,7 +50,23 @@ private object Category {
 }
 
 /** Sample data only - prototype. Replace with real data / API later. */
-fun buildChecklist(d: Details): Checklist = when (d.transaction) {
+fun buildChecklist(d: Details): Checklist {
+    val base = baseChecklist(d)
+    return base.copy(requirements = base.requirements + personalRequirements(d))
+}
+
+/** Extra items that depend on the applicant's age and work status, so every answer shapes the result. */
+private fun personalRequirements(d: Details): List<Requirement> = buildList {
+    if (d.age < ADULT_AGE) {
+        add(Requirement("guardian", "Parent or guardian consent", "Signed consent and their valid ID", Category.Permit))
+    }
+    when (d.status) {
+        "Employed" -> add(Requirement("work", "Company ID or employment certificate", "Supporting proof of identity", Category.Proof))
+        "Self-employed" -> add(Requirement("work", "Business permit or registration", "Supporting proof of identity", Category.Proof))
+    }
+}
+
+private fun baseChecklist(d: Details): Checklist = when (d.transaction) {
     "Driver's License" -> Checklist(
         requirements = buildList {
             add(Requirement("id", "Valid government-issued ID", "Or PSA birth certificate if none", Category.Id))
@@ -135,6 +157,9 @@ class AppViewModel(private val state: SavedStateHandle) : ViewModel() {
     }
 
     private fun persist() {
+        // A saved checklist follows the ticks, so the "Saved" button never promises more than is stored.
+        val i = saved.indexOfFirst { it.details == details }
+        if (i >= 0 && saved[i].checkedIds != checked.toList()) saved[i] = saved[i].copy(checkedIds = checked.toList())
         state[KEY_DETAILS] = details?.encode()
         state[KEY_CHECKED] = ArrayList(checked)
         state[KEY_SAVED] = ArrayList(saved.map { it.encode() })

@@ -2,6 +2,8 @@ package com.example.govready
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,13 +18,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 private const val MIN_AGE = 15
 private const val MAX_AGE = 90
+private const val HOLD_DELAY_MS = 400L
+private const val HOLD_REPEAT_MS = 70L
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -40,10 +53,10 @@ fun DetailsScreen(
         GovTopBar(transaction, onBack)
 
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(16.dp)) {
-            Text("A few details so the checklist fits your situation.", color = GovColors.TextMuted, fontSize = 12.sp)
+            Text("A few details so the checklist fits your situation.", color = GovColors.TextMuted, fontSize = 13.sp)
             Spacer(Modifier.height(16.dp))
 
-            GovSectionLabel("Age", fontSize = 11.sp)
+            GovSectionLabel("Age")
             Spacer(Modifier.height(8.dp))
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 StepperButton(Icons.Filled.Remove, "Decrease age") { if (age > MIN_AGE) age-- }
@@ -59,19 +72,19 @@ fun DetailsScreen(
             }
             Spacer(Modifier.height(20.dp))
 
-            GovSectionLabel("Status", fontSize = 11.sp)
+            GovSectionLabel("Status")
             Spacer(Modifier.height(8.dp))
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                listOf("Student", "Employed", "Self-employed", "Unemployed").forEach {
+                Statuses.forEach {
                     GovChip(it, selected = status == it) { status = it }
                 }
             }
             Spacer(Modifier.height(20.dp))
 
-            GovSectionLabel("First-time applicant?", fontSize = 11.sp)
+            GovSectionLabel("First-time applicant?")
             Spacer(Modifier.height(8.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 YesNoButton("Yes", firstTime, Modifier.weight(1f)) { firstTime = true }
@@ -85,18 +98,39 @@ fun DetailsScreen(
     }
 }
 
+/** Tap to step once; hold to keep stepping, so a bigger change does not take one tap per year. */
 @Composable
-private fun StepperButton(icon: ImageVector, description: String, onClick: () -> Unit) {
-    Surface(
-        onClick = onClick,
-        shape = RoundedCornerShape(8.dp),
-        color = GovColors.White,
-        border = BorderStroke(1.dp, GovColors.Border),
-        modifier = Modifier.size(40.dp)
+private fun StepperButton(icon: ImageVector, description: String, onStep: () -> Unit) {
+    val step by rememberUpdatedState(onStep)
+    Box(
+        modifier = Modifier
+            .size(48.dp)
+            .background(GovColors.White, RoundedCornerShape(8.dp))
+            .border(1.dp, GovColors.Border, RoundedCornerShape(8.dp))
+            .semantics(mergeDescendants = true) {
+                role = Role.Button
+                contentDescription = description
+                onClick(label = description) { step(); true }
+            }
+            .pointerInput(Unit) {
+                detectTapGestures(onPress = {
+                    step()
+                    coroutineScope {
+                        val repeater = launch {
+                            delay(HOLD_DELAY_MS)
+                            while (true) {
+                                step()
+                                delay(HOLD_REPEAT_MS)
+                            }
+                        }
+                        tryAwaitRelease()
+                        repeater.cancel()
+                    }
+                })
+            },
+        contentAlignment = Alignment.Center
     ) {
-        Box(contentAlignment = Alignment.Center) {
-            Icon(icon, description, tint = GovColors.TextDark, modifier = Modifier.size(18.dp))
-        }
+        Icon(icon, null, tint = GovColors.TextDark, modifier = Modifier.size(20.dp))
     }
 }
 
@@ -107,7 +141,7 @@ private fun YesNoButton(text: String, selected: Boolean, modifier: Modifier, onC
         shape = RoundedCornerShape(12.dp),
         color = if (selected) GovColors.Navy else GovColors.White,
         border = BorderStroke(1.dp, if (selected) GovColors.Navy else GovColors.Border),
-        modifier = modifier.height(44.dp)
+        modifier = modifier.height(48.dp)
     ) {
         Box(contentAlignment = Alignment.Center) {
             Text(
