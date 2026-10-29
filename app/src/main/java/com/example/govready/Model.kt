@@ -1,12 +1,13 @@
 package com.example.govready
 
+import android.app.Application
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 
 /** Single source of truth for the transactions offered on Home and Purpose. */
 val Transactions = listOf("Driver's License", "Passport", "NBI Clearance", "Postal ID")
@@ -111,17 +112,21 @@ private fun baseChecklist(d: Details): Checklist = when (d.transaction) {
 }
 
 /**
- * Backed by [SavedStateHandle] so the in-progress checklist and the saved list come back
- * if Android kills the app process while it is in the background.
+ * Backed by [SavedStateHandle] so the in-progress checklist comes back if Android kills the
+ * app process while it is in the background. The saved list is also written to private app
+ * storage, so it survives the app being closed completely.
  */
-class AppViewModel(private val state: SavedStateHandle) : ViewModel() {
+class AppViewModel(app: Application, private val state: SavedStateHandle) : AndroidViewModel(app) {
+    private val prefs = app.getSharedPreferences(PREFS, Application.MODE_PRIVATE)
+
     var details by mutableStateOf(state.get<String>(KEY_DETAILS)?.toDetails())
         private set
     val checked = mutableStateListOf<String>().apply {
         addAll(state.get<ArrayList<String>>(KEY_CHECKED).orEmpty())
     }
     val saved = mutableStateListOf<SavedChecklist>().apply {
-        addAll(state.get<ArrayList<String>>(KEY_SAVED).orEmpty().mapNotNull { it.toSavedChecklist() })
+        val onDevice = prefs.getString(KEY_SAVED, null)?.split(RECORD_SEP).orEmpty().filter { it.isNotEmpty() }
+        addAll((onDevice.ifEmpty { state.get<ArrayList<String>>(KEY_SAVED).orEmpty() }).mapNotNull { it.toSavedChecklist() })
     }
 
     fun start(d: Details) {
@@ -162,10 +167,14 @@ class AppViewModel(private val state: SavedStateHandle) : ViewModel() {
         if (i >= 0 && saved[i].checkedIds != checked.toList()) saved[i] = saved[i].copy(checkedIds = checked.toList())
         state[KEY_DETAILS] = details?.encode()
         state[KEY_CHECKED] = ArrayList(checked)
-        state[KEY_SAVED] = ArrayList(saved.map { it.encode() })
+        val encoded = saved.map { it.encode() }
+        state[KEY_SAVED] = ArrayList(encoded)
+        prefs.edit().putString(KEY_SAVED, encoded.joinToString(RECORD_SEP)).apply()
     }
 
     private companion object {
+        const val PREFS = "govready"
+        const val RECORD_SEP = "\u001E"
         const val KEY_DETAILS = "details"
         const val KEY_CHECKED = "checked"
         const val KEY_SAVED = "saved"
