@@ -62,7 +62,7 @@ fun GovReadyApp(vm: AppViewModel = viewModel()) {
         composable(Routes.HOME) { entry ->
             HomeScreen(
                 saved = vm.saved,
-                inProgress = vm.details,
+                inProgress = vm.details.takeUnless { vm.fromSaved },
                 checkedCount = vm.checked.size,
                 onCheckRequirements = { nav.navigateFrom(entry, Routes.PURPOSE) },
                 onPopularClick = { nav.navigateFrom(entry, Routes.details(it)) },
@@ -90,7 +90,8 @@ fun GovReadyApp(vm: AppViewModel = viewModel()) {
             val edit = entry.arguments?.getBoolean(Routes.ARG_EDIT) ?: false
             DetailsScreen(
                 transaction = name,
-                initial = if (edit) vm.details else null,
+                initial = if (edit) vm.details else vm.draft,
+                onDraft = vm::saveDraft,
                 onBack = { nav.backFrom(entry) },
                 onGenerate = { details ->
                     // A fresh result is a clean surface: Home -> Checklist, replacing any older one.

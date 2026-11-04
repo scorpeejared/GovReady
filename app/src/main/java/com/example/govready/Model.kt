@@ -121,6 +121,12 @@ class AppViewModel(app: Application, private val state: SavedStateHandle) : Andr
 
     var details by mutableStateOf(state.get<String>(KEY_DETAILS)?.toDetails())
         private set
+    /** True while the open checklist was reopened from Saved, so Home does not list it as "In progress". */
+    var fromSaved by mutableStateOf(state.get<Boolean>(KEY_FROM_SAVED) ?: false)
+        private set
+    /** The answers typed on Details, kept so Back and coming again does not reset them. Cleared once a checklist is generated. */
+    var draft by mutableStateOf<Details?>(null)
+        private set
     val checked = mutableStateListOf<String>().apply {
         addAll(state.get<ArrayList<String>>(KEY_CHECKED).orEmpty())
     }
@@ -131,8 +137,14 @@ class AppViewModel(app: Application, private val state: SavedStateHandle) : Andr
 
     fun start(d: Details) {
         details = d
+        fromSaved = false
+        draft = null
         checked.clear()
         persist()
+    }
+
+    fun saveDraft(d: Details) {
+        draft = d
     }
 
     fun toggle(id: String) {
@@ -147,6 +159,7 @@ class AppViewModel(app: Application, private val state: SavedStateHandle) : Andr
 
     fun openSaved(s: SavedChecklist) {
         details = s.details
+        fromSaved = true
         checked.clear()
         checked.addAll(s.checkedIds)
         persist()
@@ -166,6 +179,7 @@ class AppViewModel(app: Application, private val state: SavedStateHandle) : Andr
         val i = saved.indexOfFirst { it.details == details }
         if (i >= 0 && saved[i].checkedIds != checked.toList()) saved[i] = saved[i].copy(checkedIds = checked.toList())
         state[KEY_DETAILS] = details?.encode()
+        state[KEY_FROM_SAVED] = fromSaved
         state[KEY_CHECKED] = ArrayList(checked)
         val encoded = saved.map { it.encode() }
         state[KEY_SAVED] = ArrayList(encoded)
@@ -177,6 +191,7 @@ class AppViewModel(app: Application, private val state: SavedStateHandle) : Andr
         const val RECORD_SEP = "\u001E"
         const val KEY_DETAILS = "details"
         const val KEY_CHECKED = "checked"
+        const val KEY_FROM_SAVED = "fromSaved"
         const val KEY_SAVED = "saved"
     }
 }

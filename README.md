@@ -34,14 +34,15 @@ Home ──► What do you need? ──► Details ──► Your checklist ─�
 
 - **Back** goes one step back in the flow. From a freshly generated checklist it returns to Home.
 - Navigation ignores extra taps while a screen is still animating, so rapid tapping never creates duplicate screens or pops the root screen off the stack.
-- Form state (age, status, first-time) survives rotation, and so do checked items and the edit-confirmation dialog.
+- **Back keeps your Details answers** (age, status, first-time) until you generate a checklist.
+- The app is **portrait only**, as in the Milestone 1 document. Checked items, the Details answers and the edit-confirmation dialog still survive Android recreating the screen.
 
 ## Tech stack
 
 - **Language:** Kotlin 2.0
 - **UI:** Jetpack Compose with Material 3
 - **Navigation:** Navigation Compose
-- **State:** a single `AppViewModel` shared across screens (in-memory)
+- **State:** a single `AppViewModel` shared across screens; the saved list is also written to private app storage
 - **Build:** Gradle (Kotlin DSL) and Android Gradle Plugin 8.7
 - **SDK:** `minSdk 24`, `targetSdk` / `compileSdk 35`
 
@@ -103,14 +104,28 @@ GovReady/
 
 ## Testing
 
-The app was tested on an Android emulator with scripts that drive the real app through `adb`: navigation and back stack, rapid taps, rotation, process death, a random-input stress run, a full end-to-end walkthrough, and a measurement of the drawn UI against the Week 4 prototype. The scripts, how to run them, the results and the limits of the testing are in [`testing/`](testing/README.md).
+The app was tested on an Android emulator with scripts that drive the real app through `adb`: navigation and back stack, rapid taps, rotation, process death, a random-input stress run and a full end-to-end walkthrough. The scripts, the results and the limits of the testing are in [`testing/`](testing/README.md).
+
+### Running the tests
+
+You need Python 3, `adb`, a Bash shell (Git Bash on Windows) and an emulator or phone with the app installed. From the project root:
+
+```bash
+adb devices                          # one device should be listed
+bash testing/walkthrough.sh          # 23-step walkthrough, about 11 minutes
+bash testing/stability_suite.sh      # 68 checks and a random-input stress run, about 16 minutes
+```
+
+Each check prints `PASS` or `FAIL`, and the last line shows the totals. Do not touch the emulator while a script runs, and note that the scripts erase the app's saved data on that device. The full instructions are in [`testing/README.md`](testing/README.md#how-to-run).
 
 ## Known limitations
 
 - **Sample data only.** Requirements, fees and offices are illustrative, not official.
-- **Not stored on the device yet.** The checklist in progress, checked items and the saved list survive rotation and Android killing the app in the background (they are kept with `SavedStateHandle`), but they are lost when the user closes the app. Persisting them with DataStore or Room is a planned improvement.
+- **Only the saved list is stored on the device.** Saved checklists (with their ticks) are kept in private app storage and survive the app being closed completely. The checklist in progress survives Android killing the app in the background (`SavedStateHandle`) but is lost when the user closes the app. Moving to DataStore or Room is a possible improvement.
 - **No real backend or verification.** The "Last verified Sep 1, 2026" badge is static text in this prototype.
 
 ## Design
 
 The UI follows the approved Week 4 prototype: Philippine flag blue as the brand color, green for "verified" and checked states, and red or amber for warnings and fees.
+
+The app follows the prototype's screens, flow and use-case behavior, and the colors match. Some visual details differ: section labels are in sentence case instead of capitals, two requirement items are in a different order with slightly different wording, and text, button and card sizes are not exact (text and buttons were made larger on purpose after mentor feedback about readability). An "In progress" card, a "See all" link and tappable saved cards were added beyond the prototype frames.

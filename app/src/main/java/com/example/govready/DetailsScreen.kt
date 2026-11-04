@@ -42,12 +42,15 @@ private const val HOLD_REPEAT_MS = 70L
 fun DetailsScreen(
     transaction: String,
     initial: Details?,
+    onDraft: (Details) -> Unit,
     onBack: () -> Unit,
     onGenerate: (Details) -> Unit
 ) {
     var age by rememberSaveable { mutableIntStateOf(initial?.age ?: 19) }
     var status by rememberSaveable { mutableStateOf(initial?.status ?: "Student") }
     var firstTime by rememberSaveable { mutableStateOf(initial?.firstTime ?: true) }
+
+    LaunchedEffect(age, status, firstTime) { onDraft(Details(transaction, age, status, firstTime)) }
 
     Column(Modifier.fillMaxSize().background(GovColors.Background)) {
         GovTopBar(transaction, onBack)
